@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'bill_service.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -558,8 +559,34 @@ class _ActiveOrdersTab extends StatelessWidget {
                 style: ElevatedButton.styleFrom(backgroundColor: _orange, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                 child: Text(_nextLabel[o['status']] ?? 'Update', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
               )),
-            ] else
-              Container(padding: const EdgeInsets.symmetric(vertical: 8), child: const Center(child: Text('📦 Waiting for rider pickup...', style: TextStyle(color: _lightGreen, fontWeight: FontWeight.w600)))),
+            ] else ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(color: _lightGreen.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Icon(Icons.check_circle, color: _lightGreen, size: 16),
+                  SizedBox(width: 6),
+                  Text('Ready! Waiting for rider pickup', style: TextStyle(color: _lightGreen, fontWeight: FontWeight.w600, fontSize: 13)),
+                ]),
+              ),
+              const SizedBox(height: 10),
+              Row(children: [
+                Expanded(child: OutlinedButton.icon(
+                  onPressed: () => BillService.printBill(o),
+                  icon: const Icon(Icons.print_rounded, color: _orange, size: 16),
+                  label: const Text('Print Bill', style: TextStyle(color: _orange, fontWeight: FontWeight.w700, fontSize: 13)),
+                  style: OutlinedButton.styleFrom(side: const BorderSide(color: _orange), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), padding: const EdgeInsets.symmetric(vertical: 10)),
+                )),
+                const SizedBox(width: 10),
+                Expanded(child: ElevatedButton.icon(
+                  onPressed: () => BillService.shareBill(o),
+                  icon: const Icon(Icons.share_rounded, color: Colors.white, size: 16),
+                  label: const Text('Share Bill', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13)),
+                  style: ElevatedButton.styleFrom(backgroundColor: _orange, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), padding: const EdgeInsets.symmetric(vertical: 10)),
+                )),
+              ]),
+            ],
           ]),
         );
       },

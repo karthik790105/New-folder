@@ -17,6 +17,8 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   OrderModel? _order;
   bool _loading = true;
   late IO.Socket _socket;
+  double? _riderLat;
+  double? _riderLng;
 
   final _statuses = ['PLACED', 'ACCEPTED', 'PREPARING', 'READY', 'DISPATCHED', 'PICKED_UP', 'DELIVERED'];
   final _statusLabels = {
@@ -72,6 +74,15 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
         setState(() => _order = OrderModel.fromJson(Map<String, dynamic>.from(data)));
       }
     });
+    // Live rider GPS position updates
+    _socket.on('rider_location', (data) {
+      if (mounted) {
+        setState(() {
+          _riderLat = (data['lat'] as num?)?.toDouble();
+          _riderLng = (data['lng'] as num?)?.toDouble();
+        });
+      }
+    });
   }
 
   @override
@@ -110,6 +121,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                     // OTP display (show when PICKED_UP)
                     if (_order!.status == 'PICKED_UP' && _order!.deliveryOTP != null)
                       _buildOTPCard().animate().scale(duration: 400.ms, curve: Curves.elasticOut),
+                    // Live rider location (show when rider is on the way)
+                    if (['DISPATCHED', 'PICKED_UP'].contains(_order!.status) && _riderLat != null)
+                      _buildRiderLocationCard(),
                     // Timeline
                     const SizedBox(height: 8),
                     const Text('Order Timeline', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.textPrimary, fontSize: 16)),
@@ -166,6 +180,42 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildRiderLocationCard() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.success.withOpacity(0.5), width: 1.5),
+      ),
+      child: Row(children: [
+        // Pulsing dot
+        Container(
+          width: 14, height: 14,
+          decoration: BoxDecoration(
+            color: AppTheme.success,
+            shape: BoxShape.circle,
+            boxShadow: [BoxShadow(color: AppTheme.success.withOpacity(0.5), blurRadius: 8, spreadRadius: 3)],
+          ),
+        ).animate(onPlay: (c) => c.repeat())
+          .scale(begin: const Offset(0.7, 0.7), end: const Offset(1.3, 1.3), duration: 900.ms)
+          .then().scale(begin: const Offset(1.3, 1.3), end: const Offset(0.7, 0.7), duration: 900.ms),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('Rider Live Location', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
+          const SizedBox(height: 4),
+          Text(
+            '${_riderLat!.toStringAsFixed(5)}, ${_riderLng!.toStringAsFixed(5)}',
+            style: const TextStyle(color: AppTheme.success, fontSize: 12, fontFamily: 'monospace'),
+          ),
+          const Text('Updates every ~10 metres', style: TextStyle(color: AppTheme.textMuted, fontSize: 11)),
+        ])),
+        const Icon(Icons.navigation_rounded, color: AppTheme.success, size: 22),
+      ]),
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.1);
   }
 
   Widget _buildOTPCard() {

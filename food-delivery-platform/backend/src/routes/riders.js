@@ -98,4 +98,23 @@ router.put("/:id/suspend", (req, res) => {
   res.json({ rider: store.data.riders[idx] });
 });
 
+// Live location update from rider (called every ~10m by rider app)
+router.put("/:id/location", (req, res) => {
+  const { lat, lng, orderId } = req.body;
+  const idx = store.data.riders.findIndex(r => r._id === req.params.id);
+  if (idx !== -1) {
+    store.data.riders[idx].location = { lat, lng, updatedAt: new Date() };
+  }
+  // Broadcast to admin dashboard
+  req.io.to("admin").emit("rider_location", { riderId: req.params.id, lat, lng, orderId });
+  // Broadcast to customer tracking their order
+  if (orderId) {
+    const order = store.data.orders.find(o => o._id === orderId);
+    if (order) {
+      req.io.to(`customer_${order.customerId}`).emit("rider_location", { lat, lng });
+    }
+  }
+  res.json({ ok: true });
+});
+
 module.exports = router;

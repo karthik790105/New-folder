@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'live_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -585,18 +586,35 @@ class _DeliveryScreen extends StatelessWidget {
           ]))),
         ])),
         const SizedBox(height: 20),
-        if (status == 'DISPATCHED') ElevatedButton.icon(
+        // Live Map button – always visible during active delivery
+        OutlinedButton.icon(
+          onPressed: () {
+            final riderId = context.read<RiderState>().riderId ?? '';
+            Navigator.push(context, MaterialPageRoute(
+              builder: (_) => LiveMapScreen(order: order, riderId: riderId),
+            ));
+          },
+          icon: const Icon(Icons.map_rounded, color: _orange, size: 18),
+          label: const Text('View Live Map', style: TextStyle(color: _orange, fontWeight: FontWeight.w700)),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: _orange),
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (status == 'DISPATCHED') SizedBox(width: double.infinity, child: ElevatedButton.icon(
           onPressed: () => rider.markPickedUp(),
           icon: const Icon(Icons.check, color: Colors.white),
           label: const Text('Confirm Pickup from Restaurant', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
           style: ElevatedButton.styleFrom(backgroundColor: _success, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-        ),
-        if (status == 'PICKED_UP') ElevatedButton.icon(
+        )),
+        if (status == 'PICKED_UP') SizedBox(width: double.infinity, child: ElevatedButton.icon(
           onPressed: () => context.push('/otp-entry'),
           icon: const Icon(Icons.lock_open, color: Colors.white),
           label: const Text('Enter Delivery OTP', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
           style: ElevatedButton.styleFrom(backgroundColor: _orange, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-        ),
+        )),
       ]),
     );
   }
