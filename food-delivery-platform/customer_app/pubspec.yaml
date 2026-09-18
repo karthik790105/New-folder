@@ -1,0 +1,44 @@
+name: customer_app
+description: "Go Fresh - Food, Grocery & Meat Delivery"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  # Networking
+  http: ^1.2.2
+  # State management
+  provider: ^6.1.2
+  # Real-time
+  socket_io_client: ^2.0.3+1
+  # Local storage
+  shared_preferences: ^2.3.2
+  # Typography
+  google_fonts: ^6.2.1
+  # Navigation
+  go_router: ^14.2.7
+  # Animations
+  flutter_animate: ^4.5.0
+  lottie: ^3.1.2
+  # Images
+  cached_network_image: ^3.4.1
+  # Formatting
+  intl: ^0.19.0
+  # Location
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

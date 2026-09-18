@@ -1,0 +1,12 @@
+{
+  "name": "food-delivery-platform",
+  "version": "1.0.0",
+  "description": "Multi-sided food delivery platform",
+  "scripts": {
+    "backend": "cd backend && npm run dev",
+    "customer": "cd apps/customer && npm run dev",
+    "merchant": "cd apps/merchant && npm run dev",
+    "rider": "cd apps/rider && npm run dev",
+    "admin": "cd apps/admin && npm run dev"
+  }
+}

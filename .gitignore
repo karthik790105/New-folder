@@ -1,0 +1,49 @@
+# Node.js backend
+backend/node_modules/
+backend/.env
+backend/npm-debug.log*
+
+# Flutter build outputs
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/*.g.dart
+**/*.freezed.dart
+**/pubspec.lock
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+
+# iOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+
+# Compiled binaries & apks
+**/*.apk
+**/*.aab
+**/*.ipa
+**/*.app
+
+# Logs
+*.log
